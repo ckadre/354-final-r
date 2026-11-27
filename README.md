@@ -25,3 +25,34 @@ The recommender and Shiny interface can use the same `load_movies()` function. I
 The loader ignores exact duplicate rating records, records without a movie ID, and missing or out-of-range ratings. It uses the metadata from the first row with a nonblank title for each movie. Movies without a usable title or any valid rating are omitted. A movie with an unknown genre or year can still appear when that filter is unset.
 
 For example, movie ID `1` is **Toy Story** (1995), with genres `Adventure`, `Animation`, `Children`, `Comedy`, and `Fantasy` and an average rating of about `3.87`. Filters can split `movies$genres` into individual names with `strsplit(movies$genres, "|", fixed = TRUE)`.
+
+## Filtering and recommendations
+
+`filter_movies()` returns every matching row. `recommend_movie()` returns one row with the highest average rating, breaking ties by the lowest MovieLens ID. Both return an empty data frame with the same columns when no movies match. With no filters, all movies qualify.
+
+Pass `NULL` to skip a filter. A blank genre also skips the genre filter. Genre matching is case-insensitive and checks individual genre names. The rating is an inclusive minimum from 0.5 to 5. The optional year filter matches an exact release year and accepts whole numbers within the input dataset's year range. Invalid rating or year values produce an error.
+
+```r
+source("movie_recommendations.R")
+
+sample_movies <- data.frame(
+  movieId = c(1L, 2L, 3L),
+  title = c("Comedy Adventure", "Action Story", "Comedy Story"),
+  year = c(1995L, 1999L, 1999L),
+  genres = c("Adventure|Comedy", "Action", "Comedy"),
+  avg_rating = c(3.5, 4.5, 4)
+)
+
+filter_movies(sample_movies, genre = "comedy")$movieId
+# 1 3
+recommend_movie(sample_movies, genre = "Comedy", min_rating = 4)$title
+# "Comedy Story"
+nrow(recommend_movie(sample_movies, genre = "Comedy", year = 1999, min_rating = 5))
+# 0
+```
+
+The CLI uses the same functions. Install `optparse` once with `install.packages("optparse")`, then run from the project directory:
+
+```sh
+Rscript main.R --genre Comedy --rating 4 --year 1995
+```
