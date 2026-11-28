@@ -56,3 +56,29 @@ The CLI uses the same functions. Install `optparse` once with `install.packages(
 ```sh
 Rscript main.R --genre Comedy --rating 4 --year 1995
 ```
+
+
+## Shiny Interface
+
+We created an interactive movie recommendation app using R Shiny. Users can select a movie genre and minimum average rating to get a movie recommendation. The app displays the movie's title, release year, genres, and average rating.
+
+Install Shiny once with `install.packages("shiny")`. Then run this from the project directory in an R session:
+
+```r
+shiny::runApp(".")
+```
+
+The interface uses the existing movie dataset and recommendation functions.
+
+## Unit Testing
+
+We added unit tests to check that the movie data preparation and recommendation functions work correctly. The tests cover genre filtering, minimum ratings, combined filters, missing data, invalid inputs, duplicate ratings, and cases where no movies match.
+
+Run the tests from the project directory in an R session:
+
+```r
+source("tests/test_movie_logic.R")
+```
+
+All 24 unit tests passed during testing.
+
